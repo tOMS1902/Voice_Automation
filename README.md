@@ -40,7 +40,41 @@ Other options:
 - `--no-voice`: skip the voiceover.
 - `--take take.mp3`: use one take made in the ElevenLabs app (with `[long pause]` between lines) instead of the API.
 
-**Or let GitHub do it:** add `ELEVENLABS_API_KEY` under Settings → Secrets and variables → Actions. Then every pushed episode renders automatically, and you download the **videos** artifact from the Actions tab.
+## Automated pipeline (GitHub Actions → TikTok)
+
+Push a YAML episode (or trigger manually from the Actions tab) and the full pipeline runs:
+
+1. **Render** — frames + ElevenLabs voiceover + music mix
+2. **Upload artifact** — downloadable from the Actions run
+3. **Publish release** — voiced `.mp4` attached to a GitHub Release
+4. **Queue to Buffer** — the video is automatically added to your Buffer queue for TikTok posting
+
+### Required secrets (Settings → Secrets and variables → Actions)
+
+| Secret | What | Where to get it |
+|--------|------|-----------------|
+| `ELEVENLABS_API_KEY` | Voice synthesis | [elevenlabs.io/app/settings/api-keys](https://elevenlabs.io/app/settings/api-keys) (starts with `sk_`) |
+| `BUFFER_TOKEN` | Post to TikTok via Buffer | [publish.buffer.com/settings/api](https://publish.buffer.com/settings/api) |
+| `BUFFER_CHANNEL_ID` | Your TikTok channel in Buffer | Query the Buffer GraphQL API (see below) |
+
+To find your Buffer channel ID:
+```bash
+curl -s -X POST https://api.buffer.com \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_BUFFER_TOKEN" \
+  -d '{"query": "{ account { organizations { id } } }"}'
+# then use the org id:
+curl -s -X POST https://api.buffer.com \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_BUFFER_TOKEN" \
+  -d '{"query": "{ channels(input: { organizationId: \"YOUR_ORG_ID\" }) { id name service } }"}'
+```
+
+### Manual trigger
+
+```bash
+gh workflow run render.yml -f episode="episodes/ball-knowledge/rapid-fire-01.yaml"
+```
 
 ## Add a product
 
