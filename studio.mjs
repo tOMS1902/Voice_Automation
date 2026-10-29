@@ -50,7 +50,7 @@ async function render(path) {
   const pptr = await import('puppeteer').then(m => m.default).catch(() => import('puppeteer-core').then(m => m.default));
   const browser = await pptr.launch({
     headless: true, executablePath: process.env.CHROME_PATH || undefined,
-    args: ['--allow-file-access-from-files', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : [])],
+    args: ['--allow-file-access-from-files', ...(process.getuid?.() === 0 || process.env.CI ? ['--no-sandbox'] : [])],
   });
   const page = await browser.newPage();
   page.on('pageerror', e => console.log('page error:', String(e)));
