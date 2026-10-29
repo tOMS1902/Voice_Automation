@@ -1,0 +1,11 @@
+# One video. Render: node studio.mjs render episodes/ball-knowledge/rapid-fire-02.yaml
+product: ball-knowledge
+template: quiz-rapid-fire
+
+# NOT fact-checked yet — run `node studio.mjs check` once footy-grid repo is cloned locally.
+squares:
+  - { a: Arsenal F.C., b: France, answers: [Thierry Henry], total: 20, level: EASY }
+  - { a: Manchester United F.C., b: Netherlands, answers: [Robin van Persie], total: 8, level: EASY }
+  - { a: Real Madrid CF, b: France, answers: [Karim Benzema], total: 15, level: MEDIUM }
+  - { a: Juventus FC, b: Argentina, answers: [Paulo Dybala], say: Dybala, total: 6, level: HARD }
+  - { a: Liverpool F.C., b: "Ballon d'Or", answers: [Michael Owen, Kevin Keegan], say: "Michael Owen and Kevin Keegan", total: 2, level: IMPOSSIBLE }

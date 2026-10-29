@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Studio</title>
+<style>
+  @font-face { font-family: 'Bebas'; src: url('fonts/BebasNeue-Regular.ttf') format('truetype'); }
+  html, body { margin: 0; background: #EFE9DF; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #F7F3EC 0%, #EFE9DF 55%, #E6DED1 100%); }
+  svg { position: absolute; inset: 0; }
+  .cap { position: absolute; left: 0; right: 0; text-align: center; font-family: 'Bebas', Impact, sans-serif; color: #1D3B2C; letter-spacing: 2px; }
+  .sub { position: absolute; left: 90px; right: 90px; text-align: center; font-family: 'Segoe UI', Arial, sans-serif; font-weight: 600; color: #4A5A50; font-size: 46px; line-height: 1.25; }
+</style></head>
+<body>
+<!-- The studio writes window.PRODUCT and window.EPISODE into data.js, then loads the template. -->
+<div id="stage">
+  <svg width="1080" height="1920" viewBox="0 0 1080 1920">
+    <defs>
+      <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18" /></filter>
+      <filter id="softSmall" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" /></filter>
+    </defs>
+    <g id="world"></g>
+  </svg>
+  <div id="ui"></div>
+</div>
+<script src="../out/.page/data.js"></script>
+<script src="engine.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const s = document.createElement('script');
+  s.src = `../templates/${window.TEMPLATE}.js`;
+  s.onload = () => { window.AD.render(Number(params.get('t') ?? 0)); window.AD_READY = true; };
+  document.body.appendChild(s);
+</script>
+</body></html>

@@ -1,0 +1,41 @@
+# A product the studio can make videos for. Copy this folder to add another product.
+name: Ball Knowledge
+icon: icon.png                      # in this folder
+end_title: PROVE YOUR BALL KNOWLEDGE
+end_line: Unlimited grids. Play with your mates.
+pill: FREE ON IPHONE
+
+voice:
+  voice_id: 9pCmAgiNEaOFtzFyMvgs    # "tom clone" in ElevenLabs
+  model: eleven_v3                  # supports tags like [excited]
+  sign_off: Ball Knowledge. Free on iPhone.
+  pronunciations:                   # spelled how it sounds, applied to every line
+    Weah: Way-ah
+
+# The product's own repo, for fact-checking episodes against its real data.
+# `studio check` runs the command once per square, in a local clone of the repo.
+source:
+  repo: https://github.com/krabbitte0/footy-grid
+  local_path: ../footy-grid         # or set FOOTY_GRID_PATH
+  local_path_env: FOOTY_GRID_PATH
+  check: node store/ad/check.ts "{a}" "{b}" list
+
+# Quiz header icons. Labels must match the app's category labels exactly.
+# kit: [main colour, second colour, plain | stripes | hoops | sleeves]  (never badges or logos)
+# flag: [v | h, colour 1, colour 2, colour 3]   award: true = gold ball
+# say: how the voice reads it (defaults to `short`)
+categories:
+  Arsenal F.C.: { short: ARSENAL, kit: ['#DB0007', '#FFFFFF', sleeves] }
+  Liverpool F.C.: { short: LIVERPOOL, kit: ['#C8102E', '#FFFFFF', plain] }
+  Manchester United F.C.: { short: MAN UTD, say: Man United, kit: ['#DA291C', '#FFFFFF', plain] }
+  Manchester City F.C.: { short: MAN CITY, kit: ['#6CABDD', '#FFFFFF', plain] }
+  Real Madrid CF: { short: REAL MADRID, kit: ['#FFFFFF', '#FEBE10', plain] }
+  FC Barcelona: { short: BARCELONA, kit: ['#A50044', '#004D98', stripes] }
+  Juventus FC: { short: JUVENTUS, kit: ['#111111', '#FFFFFF', stripes] }
+  FC Bayern Munich: { short: BAYERN, kit: ['#DC052D', '#FFFFFF', plain] }
+  Celtic F.C.: { short: CELTIC, kit: ['#018749', '#FFFFFF', hoops] }
+  France: { short: FRANCE, flag: [v, '#0055A4', '#FFFFFF', '#EF4135'] }
+  Argentina: { short: ARGENTINA, flag: [h, '#74ACDF', '#FFFFFF', '#74ACDF'] }
+  Netherlands: { short: NETHERLANDS, flag: [h, '#AE1C28', '#FFFFFF', '#21468B'] }
+  Ireland: { short: IRELAND, flag: [v, '#169B62', '#FFFFFF', '#FF883E'] }
+  "Ballon d'Or": { short: "BALLON D'OR", award: true }

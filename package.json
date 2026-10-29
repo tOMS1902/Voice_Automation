@@ -1,0 +1,15 @@
+{
+  "name": "studio",
+  "private": true,
+  "type": "module",
+  "description": "Marketing video studio: animated, voiced, ready-to-post videos for any product.",
+  "scripts": {
+    "render": "node studio.mjs render",
+    "check": "node studio.mjs check"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "puppeteer": "^24.0.0",
+    "yaml": "^2.5.0"
+  }
+}

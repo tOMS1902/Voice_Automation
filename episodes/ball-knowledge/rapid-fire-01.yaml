@@ -1,0 +1,17 @@
+# One video. Render: node studio.mjs render episodes/ball-knowledge/rapid-fire-01.yaml
+product: ball-knowledge
+template: quiz-rapid-fire
+
+# Checked against the app's data with `node studio.mjs check` (29 Oct 2026).
+# total = how many answers the app accepts; if you show all of them, list them all.
+squares:
+  - { a: FC Barcelona, b: Argentina, answers: [Lionel Messi], total: 52, level: EASY }
+  - { a: FC Bayern Munich, b: Netherlands, answers: [Arjen Robben], total: 12, level: EASY }
+  - { a: Juventus FC, b: "Ballon d'Or", answers: [Zinedine Zidane], total: 8, level: MEDIUM }
+  - { a: Celtic F.C., b: Ireland, answers: [Robbie Keane], say: Robbie Keane, total: 47, level: HARD }
+  - { a: Manchester City F.C., b: "Ballon d'Or", answers: [George Weah, Rodri, Denis Law], say: "Weah, Rodri, Denis Law", total: 3, level: IMPOSSIBLE }
+
+# Optional (defaults shown):
+# hook: ["5 SQUARES. 3 SECONDS.", "ONLY 1% GET 5/5"]
+# voice_hook: "[excited] Only one percent get all 5!"
+# voice: false     # no voiceover for this one

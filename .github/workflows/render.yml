@@ -1,0 +1,45 @@
+name: Render videos
+
+# Push a new or changed episode (episodes/<product>/<name>.yaml) and this renders it.
+# The finished videos are under the run's "videos" artifact. Or run it by hand from the Actions tab.
+on:
+  push:
+    paths: ["episodes/**.yaml"]
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode file, e.g. episodes/ball-knowledge/rapid-fire-01.yaml"
+        required: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci || npm install
+      # voiced lines are cached, so a timing tweak re-renders without spending credits
+      - uses: actions/cache@v4
+        with:
+          path: out/voice-cache
+          key: voice-${{ github.run_id }}
+          restore-keys: voice-
+      - name: Render
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.episode }}" ]; then
+            files="${{ github.event.inputs.episode }}"
+          else
+            files=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'episodes/*.yaml' 'episodes/**/*.yaml' || true)
+          fi
+          for f in $files; do echo "::group::$f"; node studio.mjs render "$f"; echo "::endgroup::"; done
+          mkdir -p videos
+          for d in out/*/*/; do [ -f "$d/video.mp4" ] && n=$(basename "$d") && cp "$d/video.mp4" "videos/$n.mp4" && cp "$d/silent.mp4" "videos/$n-silent.mp4" && { [ -f "$d/caption.txt" ] && cp "$d/caption.txt" "videos/$n-caption.txt" || true; }; done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: videos/
+          if-no-files-found: warn
