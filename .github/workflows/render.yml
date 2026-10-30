@@ -47,7 +47,11 @@ jobs:
             fi
             if ls "$d"/slide-*.png 1>/dev/null 2>&1; then
               mkdir -p "videos/$n-slides"
-              cp "$d"/slide-*.png "videos/$n-slides/"
+              for s in "$d"/slide-*.png; do
+                sname=$(basename "$s")
+                cp "$s" "videos/$n-slides/$sname"
+                cp "$s" "videos/$n-$sname"
+              done
             fi
             [ -f "$d/caption.txt" ] && cp "$d/caption.txt" "videos/$n-caption.txt" || true
           done
@@ -64,9 +68,9 @@ jobs:
         run: |
           tag="render-$(date +%Y%m%d-%H%M%S)-${GITHUB_RUN_NUMBER}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          # Collect voiced videos (skip -silent variants) and carousel slides
+          # Collect voiced videos (skip -silent variants) and carousel slides (flat)
           voiced_files=$(ls videos/*.mp4 2>/dev/null | grep -v '\-silent\.mp4$' || true)
-          slide_files=$(find videos -name 'slide-*.png' 2>/dev/null || true)
+          slide_files=$(ls videos/*-slide-*.png 2>/dev/null || true)
           all_files="$voiced_files $slide_files"
           all_files=$(echo "$all_files" | xargs)
           if [ -z "$all_files" ]; then
@@ -108,17 +112,17 @@ jobs:
               -d "$query")
             echo "$response" | jq .
           done
-          # Post carousels (multi-image)
+          # Post carousels (multi-image) — slides are flat: videos/{name}-slide-{NN}.png
           for slides_dir in videos/*-slides; do
             [ -d "$slides_dir" ] || continue
             name=$(basename "$slides_dir" -slides)
             caption_file="videos/${name}-caption.txt"
             if [ -f "$caption_file" ]; then caption=$(cat "$caption_file"); else caption="$name"; fi
-            # Build image asset array from slide PNGs
+            # Build image asset array from flat release assets
             assets="[]"
-            for slide in "$slides_dir"/slide-*.png; do
-              slide_name=$(basename "$slide")
-              slide_url="https://github.com/${{ github.repository }}/releases/download/${tag}/${name}-slides%2F${slide_name}"
+            for slide in videos/${name}-slide-*.png; do
+              slide_file=$(basename "$slide")
+              slide_url="https://github.com/${{ github.repository }}/releases/download/${tag}/${slide_file}"
               assets=$(echo "$assets" | jq --arg url "$slide_url" '. + [{image: {url: $url}}]')
             done
             echo "Queuing carousel $name to Buffer ($(echo "$assets" | jq length) slides)..."
