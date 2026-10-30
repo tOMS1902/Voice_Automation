@@ -1,0 +1,24 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  # EASY - everyone knows this one
+  - name: Cristiano Ronaldo
+    current_club: Manchester United F.C.
+    previous_club: Juventus FC
+  # MEDIUM - most fans know this
+  - name: Bruno Fernandes
+    current_club: Manchester United F.C.
+    previous_club: Sporting CP
+  # HARD - real fans only
+  - name: Ousmane Dembele
+    current_club: Paris Saint-Germain
+    previous_club: FC Barcelona
+  # IMPOSSIBLE - only true ball knowledge
+  - name: Dominik Szoboszlai
+    current_club: Liverpool F.C.
+    previous_club: RB Salzburg
+caption: |
+  Easy to IMPOSSIBLE! Can you get all 4?
+  Swipe to reveal the answers
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #transferquiz #fyp

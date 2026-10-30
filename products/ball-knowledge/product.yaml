@@ -43,4 +43,8 @@ categories:
   AS Roma: { short: ROMA, kit: ['#8E1F2F', '#F0BC42', plain] }
   Chelsea F.C.: { short: CHELSEA, kit: ['#034694', '#FFFFFF', plain] }
   Tottenham Hotspur F.C.: { short: SPURS, kit: ['#FFFFFF', '#132257', plain] }
+  Sporting CP: { short: SPORTING, kit: ['#006847', '#FFFFFF', stripes] }
+  RB Salzburg: { short: SALZBURG, kit: ['#E2001A', '#FFFFFF', plain] }
+  Stade Rennais F.C.: { short: RENNES, kit: ['#E2001A', '#000000', plain] }
+  S.L. Benfica: { short: BENFICA, kit: ['#FF0000', '#FFFFFF', plain] }
   "Ballon d'Or": { short: "BALLON D'OR", award: true }
