@@ -16,6 +16,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import YAML from 'yaml';
 import { mix } from './engine/audio.mjs';
 import { voice } from './engine/voice.mjs';
+import { fetchPlayerImages } from './engine/images.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 process.chdir(ROOT);
@@ -43,6 +44,13 @@ async function render(path) {
   const OUT = join('out', ep.product, name);
   mkdirSync(OUT, { recursive: true });
   mkdirSync('out/.page', { recursive: true });
+  // Prefetch player images for carousel templates
+  if (ep.players?.length) {
+    console.log('Fetching player images...');
+    ep.players = await fetchPlayerImages(ep.players);
+    // Convert to absolute paths for Puppeteer file:// access
+    ep.players = ep.players.map(p => ({ ...p, imagePath: p.imagePath ? resolve(p.imagePath) : null }));
+  }
   // what the page sees: product (icon relative to engine/page.html), episode, template
   const P = { ...product, icon: product.icon ? relative('engine', join(pdir, product.icon)).replaceAll('\\', '/') : '' };
   writeFileSync('out/.page/data.js', `window.PRODUCT = ${JSON.stringify(P)};\nwindow.EPISODE = ${JSON.stringify(ep)};\nwindow.TEMPLATE = ${JSON.stringify(ep.template)};\n`);
@@ -68,6 +76,22 @@ async function render(path) {
     }
     await browser.close();
     return console.log(`stills in ${OUT}`);
+  }
+
+  // Carousel mode: output individual slide PNGs, skip video/audio
+  const { CAROUSEL, SLIDES } = await page.evaluate(() => ({ CAROUSEL: window.AD.CAROUSEL ?? false, SLIDES: window.AD.SLIDES ?? 0 }));
+  if (CAROUSEL && SLIDES > 0) {
+    console.log(`${product.name} / ${name}: ${SLIDES} slides, template ${ep.template} (carousel)`);
+    for (let i = 0; i < SLIDES; i++) {
+      await page.evaluate(x => window.AD.render(x), i);
+      const slideName = `slide-${String(i + 1).padStart(2, '0')}.png`;
+      await stage.screenshot({ path: join(OUT, slideName) });
+      console.log(`  ${slideName}`);
+    }
+    await browser.close();
+    if (ep.caption) writeFileSync(join(OUT, 'caption.txt'), ep.caption.trim() + '\n');
+    console.log(`\nCarousel ready: ${OUT} (${SLIDES} slides)`);
+    return;
   }
 
   console.log(`${product.name} / ${name}: ${DURATION.toFixed(1)}s, template ${ep.template}`);

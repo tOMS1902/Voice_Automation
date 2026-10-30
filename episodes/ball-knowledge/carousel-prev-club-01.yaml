@@ -1,0 +1,19 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  - name: Kylian Mbappe
+    current_club: Real Madrid CF
+    previous_club: Paris Saint-Germain
+  - name: Jude Bellingham
+    current_club: Real Madrid CF
+    previous_club: Borussia Dortmund
+  - name: Mohamed Salah
+    current_club: Liverpool F.C.
+    previous_club: AS Roma
+  - name: Erling Haaland
+    current_club: Manchester City F.C.
+    previous_club: Borussia Dortmund
+caption: |
+  Can you guess all 4? Swipe to reveal!
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #fyp

@@ -1,13 +1,22 @@
 // Template "quiz-rapid-fire": N squares, 3 seconds each, easy to impossible. Viewers comment their score.
 // Content comes from the episode (window.EPISODE), branding and voice from the product (window.PRODUCT).
 // Episode fields: hook: [line1, line2], prompt, squares: [{ a, b, answers: [...], total, level, say? }],
-//                 outro: [line1, line2], cta, voice_hook.
+//                 outro: [line1, line2], cta, voice_hook,
+//                 style: { bg, accent, accent2, countdown, hookSize, revealSize, timerWidth, confetti, cd, music: { bpm, gain } }.
 const EP = window.EPISODE;
+const S = {
+  bg: '#2A1236', accent: '#FFE14D', accent2: '#FFFFFF',
+  countdown: 260, hookSize: 112, revealSize: 100, timerWidth: 600,
+  confetti: ['#FFE14D', '#2ECC71', '#FFFFFF', '#B620E0', '#6CABDD'],
+  cd: 3, music: { bpm: 128, gain: 0.8 },
+  ...(EP.style ?? {}),
+};
+if (EP.style?.music) S.music = { bpm: 128, gain: 0.8, ...EP.style.music };
 const QS = EP.squares.map((q, i, all) => ({ a: q.a, b: q.b, names: q.answers, n: q.total ?? q.answers.length, level: q.level ?? 'EASY', say: q.say, last: i === all.length - 1 }));
 const HOOK = EP.hook ?? [`${QS.length} SQUARES. 3 SECONDS.`, `ONLY 1% GET ${QS.length}/${QS.length}`];
 const OUTRO_TXT = EP.outro ?? ['HOW MANY', 'DID YOU GET?'];
 const LEVEL = { EASY: Q.green, MEDIUM: '#F5A623', HARD: Q.red, IMPOSSIBLE: '#B620E0' };
-const IN = 0.4, CD = 3, REVEAL = 1.2, OUT = 0.3;
+const IN = 0.4, CD = S.cd, REVEAL = 1.2, OUT = 0.3;
 let at = 2.0;
 for (const q of QS) {
   q.start = at; q.cdAt = at + IN; q.revealAt = q.cdAt + CD;
@@ -23,17 +32,17 @@ function inSq(k, out, inner) {
 }
 
 function render(t) {
-  let g = qBg(t, '#2A1236'), ui = '';
+  let g = qBg(t, S.bg), ui = '';
   const pulse = 1 + 0.03 * Math.sin(t * 5);
   if (t < OUTRO) {
-    g += qText(HOOK[0], 540, 240, 112, prog(t, 0.1, 0.5), { slam: true, pulse });
-    g += qText(HOOK[1], 540, 370, 112, prog(t, 0.45, 0.85), { slam: true, pulse, fill: '#FFFFFF' });
+    g += qText(HOOK[0], 540, 240, S.hookSize, prog(t, 0.1, 0.5), { slam: true, pulse });
+    g += qText(HOOK[1], 540, 370, S.hookSize, prog(t, 0.45, 0.85), { slam: true, pulse, fill: S.accent2 });
   } else if (t < END + 0.7) {
     g += qText(OUTRO_TXT[0], 540, 240, 120, prog(t, OUTRO, OUTRO + 0.4), { slam: true, pulse });
-    g += qText(OUTRO_TXT[1], 540, 370, 120, prog(t, OUTRO + 0.15, OUTRO + 0.55), { slam: true, pulse, fill: '#FFFFFF' });
+    g += qText(OUTRO_TXT[1], 540, 370, 120, prog(t, OUTRO + 0.15, OUTRO + 0.55), { slam: true, pulse, fill: S.accent2 });
   }
   if (t > 0.9 && t < QS[0].start + 0.2) {
-    g += qText(EP.prompt ?? 'NAME A PLAYER WHO FITS BOTH', 540, 900, 70, prog(t, 0.9, 1.3), { fill: '#FFFFFF', sw: 8, out: prog(t, QS[0].start - 0.1, QS[0].start + 0.2) });
+    g += qText(EP.prompt ?? 'NAME A PLAYER WHO FITS BOTH', 540, 900, 70, prog(t, 0.9, 1.3), { fill: S.accent2, sw: 8, out: prog(t, QS[0].start - 0.1, QS[0].start + 0.2) });
   }
 
   for (const q of QS) {
@@ -42,12 +51,12 @@ function render(t) {
     const n = QS.indexOf(q) + 1, revealed = t >= q.revealAt, ft = 1 - prog(t, q.end - 0.25, q.end);
     g += qCard(t, q.a, q.b, k, out);
     const live = !revealed;
-    g += qSquare(k, out, live ? Q.cellHi : Q.cell, live ? Q.yellow : null);
+    g += qSquare(k, out, live ? Q.cellHi : Q.cell, live ? S.accent : null);
     if (live) {
-      g += inSq(k, out, (t < q.cdAt ? `<text y="60" font-family="Bebas, Impact" font-size="220" text-anchor="middle" fill="#FFFFFF" opacity="0.25">?</text>` : '')
-        + qCount(t, q.cdAt, CD, 0, 80, 260));
-      g += qPill(`${n}/${QS.length}  ${q.level}`, 540, 1335, 44, LEVEL[q.level], '#FFFFFF', k * (1 - out));
-      g += qTimerBar(240, 1395, 600, prog(t, q.cdAt, q.revealAt));
+      g += inSq(k, out, (t < q.cdAt ? `<text y="60" font-family="Bebas, Impact" font-size="220" text-anchor="middle" fill="${S.accent2}" opacity="0.25">?</text>` : '')
+        + qCount(t, q.cdAt, CD, 0, 80, S.countdown));
+      g += qPill(`${n}/${QS.length}  ${q.level}`, 540, 1335, 44, LEVEL[q.level], S.accent2, k * (1 - out));
+      g += qTimerBar(240, 1395, S.timerWidth, prog(t, q.cdAt, q.revealAt));
     } else {
       const k2 = prog(t, q.revealAt, q.revealAt + 0.45);
       const kit = Q_CATS[q.a].kit;
@@ -58,18 +67,18 @@ function render(t) {
       // names under the square
       q.names.forEach((name, i) => {
         const kn = prog(t, q.revealAt + i * 0.55, q.revealAt + i * 0.55 + 0.3) * ft;
-        g += qText(name.toUpperCase(), 540, 1345 + i * 92, q.last ? 84 : 100, kn, { fill: i === 0 ? Q.yellow : '#FFFFFF' });
+        g += qText(name.toUpperCase(), 540, 1345 + i * 92, q.last ? 84 : S.revealSize, kn, { fill: i === 0 ? S.accent : S.accent2 });
       });
-      if (!q.last) g += qText(`+${q.n - 1} MORE ANSWERS`, 540, 1440, 48, prog(t, q.revealAt + 0.25, q.revealAt + 0.5) * ft, { fill: '#FFFFFF', sw: 6, ls: 1 });
+      if (!q.last) g += qText(`+${q.n - 1} MORE ANSWERS`, 540, 1440, 48, prog(t, q.revealAt + 0.25, q.revealAt + 0.5) * ft, { fill: S.accent2, sw: 6, ls: 1 });
       else {
-        g += qText('THE ONLY 3 IN THE GAME', 540, 478, 58, prog(t, q.revealAt + 1.4, q.revealAt + 1.7) * ft, { fill: '#FFFFFF', sw: 8 });
-        g += confetti(540, 1000, prog(t, q.revealAt + 1.2, q.revealAt + 2.6), 7, [Q.yellow, Q.green, '#FFFFFF', '#B620E0', '#6CABDD']);
+        g += qText('THE ONLY 3 IN THE GAME', 540, 478, 58, prog(t, q.revealAt + 1.4, q.revealAt + 1.7) * ft, { fill: S.accent2, sw: 8 });
+        g += confetti(540, 1000, prog(t, q.revealAt + 1.2, q.revealAt + 2.6), 7, S.confetti);
       }
     }
   }
   if (t >= OUTRO && t < END + 0.7) {
     g += qText(EP.cta ?? 'COMMENT YOUR SCORE', 540, 1000, 96, prog(t, OUTRO + 0.4, OUTRO + 0.8), { pulse: 1 + 0.04 * Math.sin(t * 8) });
-    g += qText(`OUT OF ${QS.length}`, 540, 1110, 76, prog(t, OUTRO + 0.6, OUTRO + 1.0), { fill: '#FFFFFF', sw: 8 });
+    g += qText(`OUT OF ${QS.length}`, 540, 1110, 76, prog(t, OUTRO + 0.6, OUTRO + 1.0), { fill: S.accent2, sw: 8 });
   }
   ui += qEnd(t, END);
   paint(g, ui);
@@ -102,4 +111,4 @@ const VOICE = V && EP.voice !== false ? {
   ],
 } : null;
 
-window.AD = { FPS: 30, DURATION, render, VOICE, SOUND: { music: { from: 0.3, to: DURATION - 0.2, bpm: 128, gain: 0.8 }, cues } };
+window.AD = { FPS: 30, DURATION, render, VOICE, SOUND: { music: { from: 0.3, to: DURATION - 0.2, bpm: S.music.bpm, gain: S.music.gain }, cues } };

@@ -40,7 +40,17 @@ jobs:
           fi
           for f in $files; do echo "::group::$f"; node studio.mjs render "$f"; echo "::endgroup::"; done
           mkdir -p videos
-          for d in out/*/*/; do [ -f "$d/video.mp4" ] && n=$(basename "$d") && cp "$d/video.mp4" "videos/$n.mp4" && cp "$d/silent.mp4" "videos/$n-silent.mp4" && { [ -f "$d/caption.txt" ] && cp "$d/caption.txt" "videos/$n-caption.txt" || true; }; done
+          for d in out/*/*/; do
+            n=$(basename "$d")
+            if [ -f "$d/video.mp4" ]; then
+              cp "$d/video.mp4" "videos/$n.mp4" && cp "$d/silent.mp4" "videos/$n-silent.mp4"
+            fi
+            if ls "$d"/slide-*.png 1>/dev/null 2>&1; then
+              mkdir -p "videos/$n-slides"
+              cp "$d"/slide-*.png "videos/$n-slides/"
+            fi
+            [ -f "$d/caption.txt" ] && cp "$d/caption.txt" "videos/$n-caption.txt" || true
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: videos
@@ -54,14 +64,17 @@ jobs:
         run: |
           tag="render-$(date +%Y%m%d-%H%M%S)-${GITHUB_RUN_NUMBER}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          # Only upload voiced videos (skip -silent variants)
+          # Collect voiced videos (skip -silent variants) and carousel slides
           voiced_files=$(ls videos/*.mp4 2>/dev/null | grep -v '\-silent\.mp4$' || true)
-          if [ -z "$voiced_files" ]; then
-            echo "No voiced videos to release"
+          slide_files=$(find videos -name 'slide-*.png' 2>/dev/null || true)
+          all_files="$voiced_files $slide_files"
+          all_files=$(echo "$all_files" | xargs)
+          if [ -z "$all_files" ]; then
+            echo "No videos or carousels to release"
             echo "has_release=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          gh release create "$tag" $voiced_files \
+          gh release create "$tag" $all_files \
             --title "Videos $tag" \
             --notes "Auto-rendered from episode YAML push." \
             --latest=false
@@ -78,17 +91,15 @@ jobs:
             exit 0
           fi
           tag="${{ steps.release.outputs.tag }}"
+          # Post videos
           for mp4 in videos/*.mp4; do
+            [ -f "$mp4" ] || continue
             echo "$mp4" | grep -q '\-silent\.mp4$' && continue
             name=$(basename "$mp4" .mp4)
             video_url="https://github.com/${{ github.repository }}/releases/download/${tag}/${name}.mp4"
             caption_file="videos/${name}-caption.txt"
-            if [ -f "$caption_file" ]; then
-              caption=$(cat "$caption_file")
-            else
-              caption="$name"
-            fi
-            echo "Queuing $name to Buffer..."
+            if [ -f "$caption_file" ]; then caption=$(cat "$caption_file"); else caption="$name"; fi
+            echo "Queuing video $name to Buffer..."
             query=$(jq -n --arg text "$caption" --arg ch "$BUFFER_CHANNEL_ID" --arg url "$video_url" \
               '{query: "mutation CreatePost($input: CreatePostInput!) { createPost(input: $input) { ... on PostActionSuccess { post { id } } ... on MutationError { message } } }", variables: {input: {text: $text, channelId: $ch, schedulingType: "automatic", mode: "addToQueue", assets: [{video: {url: $url, metadata: {thumbnailOffset: 2000}}}]}}}')
             response=$(curl -sf -X POST "https://api.buffer.com" \
@@ -96,5 +107,26 @@ jobs:
               -H "Authorization: Bearer $BUFFER_TOKEN" \
               -d "$query")
             echo "$response" | jq .
-            echo " done."
+          done
+          # Post carousels (multi-image)
+          for slides_dir in videos/*-slides; do
+            [ -d "$slides_dir" ] || continue
+            name=$(basename "$slides_dir" -slides)
+            caption_file="videos/${name}-caption.txt"
+            if [ -f "$caption_file" ]; then caption=$(cat "$caption_file"); else caption="$name"; fi
+            # Build image asset array from slide PNGs
+            assets="[]"
+            for slide in "$slides_dir"/slide-*.png; do
+              slide_name=$(basename "$slide")
+              slide_url="https://github.com/${{ github.repository }}/releases/download/${tag}/${name}-slides%2F${slide_name}"
+              assets=$(echo "$assets" | jq --arg url "$slide_url" '. + [{image: {url: $url}}]')
+            done
+            echo "Queuing carousel $name to Buffer ($(echo "$assets" | jq length) slides)..."
+            query=$(jq -n --arg text "$caption" --arg ch "$BUFFER_CHANNEL_ID" --argjson assets "$assets" \
+              '{query: "mutation CreatePost($input: CreatePostInput!) { createPost(input: $input) { ... on PostActionSuccess { post { id } } ... on MutationError { message } } }", variables: {input: {text: $text, channelId: $ch, schedulingType: "automatic", mode: "addToQueue", assets: $assets}}}')
+            response=$(curl -sf -X POST "https://api.buffer.com" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $BUFFER_TOKEN" \
+              -d "$query")
+            echo "$response" | jq .
           done

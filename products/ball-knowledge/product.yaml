@@ -38,4 +38,9 @@ categories:
   Argentina: { short: ARGENTINA, flag: [h, '#74ACDF', '#FFFFFF', '#74ACDF'] }
   Netherlands: { short: NETHERLANDS, flag: [h, '#AE1C28', '#FFFFFF', '#21468B'] }
   Ireland: { short: IRELAND, flag: [v, '#169B62', '#FFFFFF', '#FF883E'] }
+  Paris Saint-Germain: { short: PSG, kit: ['#004170', '#E30613', plain] }
+  Borussia Dortmund: { short: DORTMUND, kit: ['#FDE100', '#000000', plain] }
+  AS Roma: { short: ROMA, kit: ['#8E1F2F', '#F0BC42', plain] }
+  Chelsea F.C.: { short: CHELSEA, kit: ['#034694', '#FFFFFF', plain] }
+  Tottenham Hotspur F.C.: { short: SPURS, kit: ['#FFFFFF', '#132257', plain] }
   "Ballon d'Or": { short: "BALLON D'OR", award: true }
