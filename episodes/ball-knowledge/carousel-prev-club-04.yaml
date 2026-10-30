@@ -1,0 +1,24 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  # EASY - everyone knows this one
+  - name: Eden Hazard
+    current_club: Real Madrid CF
+    previous_club: Chelsea F.C.
+  # MEDIUM - most fans know this
+  - name: Robert Lewandowski
+    current_club: FC Barcelona
+    previous_club: FC Bayern Munich
+  # HARD - real fans only
+  - name: Sadio Mane
+    current_club: FC Bayern Munich
+    previous_club: Liverpool F.C.
+  # IMPOSSIBLE - only true ball knowledge
+  - name: Angel Di Maria
+    current_club: Paris Saint-Germain
+    previous_club: Manchester United F.C.
+caption: |
+  Easy to IMPOSSIBLE! Can you get all 4?
+  Swipe to reveal the answers
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #transferquiz #fyp

@@ -1,0 +1,24 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  # EASY - everyone knows this one
+  - name: Neymar
+    current_club: Paris Saint-Germain
+    previous_club: FC Barcelona
+  # MEDIUM - most fans know this
+  - name: Robin van Persie
+    current_club: Manchester United F.C.
+    previous_club: Arsenal F.C.
+  # HARD - real fans only
+  - name: Philippe Coutinho
+    current_club: FC Barcelona
+    previous_club: Liverpool F.C.
+  # IMPOSSIBLE - only true ball knowledge
+  - name: Gianluigi Buffon
+    current_club: Paris Saint-Germain
+    previous_club: Juventus FC
+caption: |
+  Easy to IMPOSSIBLE! Can you get all 4?
+  Swipe to reveal the answers
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #transferquiz #fyp
