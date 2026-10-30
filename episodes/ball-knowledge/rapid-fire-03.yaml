@@ -1,0 +1,14 @@
+# One video. Render: node studio.mjs render episodes/ball-knowledge/rapid-fire-03.yaml
+product: ball-knowledge
+template: quiz-rapid-fire
+
+# NOT fact-checked yet — run `node studio.mjs check` once footy-grid repo is cloned locally.
+squares:
+  - { a: Real Madrid CF, b: Netherlands, answers: [Arjen Robben], total: 5, level: EASY }
+  - { a: Liverpool F.C., b: Netherlands, answers: [Virgil van Dijk], total: 10, level: EASY }
+  - { a: FC Barcelona, b: France, answers: [Thierry Henry], total: 18, level: MEDIUM }
+  - { a: Manchester United F.C., b: Argentina, answers: [Carlos Tevez], say: Tevez, total: 4, level: HARD }
+  - { a: Manchester City F.C., b: France, answers: [Samir Nasri, Nicolas Anelka], say: "Nasri and Anelka", total: 2, level: IMPOSSIBLE }
+
+caption: |
+  Name them all! Comment your score #ballknowledge #football #footballquiz #futbol #soccer #rapidfire #fyp
