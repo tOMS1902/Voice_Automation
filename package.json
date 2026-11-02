@@ -5,9 +5,12 @@
   "description": "Marketing video studio: animated, voiced, ready-to-post videos for any product.",
   "scripts": {
     "render": "node studio.mjs render",
-    "check": "node studio.mjs check"
+    "check": "node studio.mjs check",
+    "bot": "node bot/index.mjs",
+    "bot:deploy": "node bot/deploy-commands.mjs"
   },
   "dependencies": {
+    "discord.js": "^14.28.0",
     "ffmpeg-static": "^5.2.0",
     "puppeteer": "^24.0.0",
     "yaml": "^2.5.0"

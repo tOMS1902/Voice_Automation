@@ -1,0 +1,24 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  # EASY - everyone knows this one
+  - name: Zinedine Zidane
+    current_club: Real Madrid CF
+    previous_club: Juventus FC
+  # MEDIUM - most fans know this
+  - name: Luka Modric
+    current_club: Real Madrid CF
+    previous_club: Tottenham Hotspur F.C.
+  # HARD - real fans only
+  - name: Hector Bellerin
+    current_club: Arsenal F.C.
+    previous_club: FC Barcelona
+  # IMPOSSIBLE - only true ball knowledge
+  - name: Thomas Gravesen
+    current_club: Real Madrid CF
+    previous_club: Celtic F.C.
+caption: |
+  Easy to IMPOSSIBLE! Can you get all 4?
+  Swipe to reveal the answers
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #transferquiz #fyp

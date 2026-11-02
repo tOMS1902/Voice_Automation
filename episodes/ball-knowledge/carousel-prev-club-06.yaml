@@ -1,0 +1,24 @@
+product: ball-knowledge
+template: quiz-carousel-prev-club
+players:
+  # EASY - everyone knows this one
+  - name: David Beckham
+    current_club: Manchester United F.C.
+    previous_club: Real Madrid CF
+  # MEDIUM - most fans know this
+  - name: Antoine Griezmann
+    current_club: FC Barcelona
+    previous_club: Paris Saint-Germain
+  # HARD - real fans only
+  - name: Memphis Depay
+    current_club: FC Barcelona
+    previous_club: Manchester United F.C.
+  # IMPOSSIBLE - only true ball knowledge
+  - name: Nuri Sahin
+    current_club: Real Madrid CF
+    previous_club: Borussia Dortmund
+caption: |
+  Easy to IMPOSSIBLE! Can you get all 4?
+  Swipe to reveal the answers
+  Play the full game - link in bio
+  #ballknowledge #football #footballquiz #transferquiz #fyp
