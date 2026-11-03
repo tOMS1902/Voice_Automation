@@ -16,7 +16,26 @@ BUFFER_CHANNEL_ID=your_tiktok_channel_id
 
 2. Install dependencies: `npm install`
 3. Register slash commands: `npm run bot:deploy`
-4. Start the bot: `npm run bot`
+4. Start the bot: `npm run bot` (or use pm2 — see below)
+
+## Running with pm2 (Recommended)
+
+pm2 keeps the bot running in the background and auto-restarts it if it crashes.
+
+```bash
+npm i -g pm2
+pm2 start bot/index.mjs --name ball-bot
+```
+
+Useful commands:
+
+| Command | What it does |
+|---------|--------------|
+| `pm2 status` | Check if the bot is running |
+| `pm2 logs ball-bot` | View live logs |
+| `pm2 restart ball-bot` | Restart the bot |
+| `pm2 stop ball-bot` | Stop the bot |
+| `pm2 delete ball-bot` | Remove it from pm2 |
 
 ## Commands
 
